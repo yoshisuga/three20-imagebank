@@ -1,0 +1,223 @@
+Index: src/Three20UICommon/Sources/UIViewControllerAdditions.m
+===================================================================
+--- src/Three20UICommon/Sources/UIViewControllerAdditions.m	(revision 1193)
++++ src/Three20UICommon/Sources/UIViewControllerAdditions.m	(working copy)
+@@ -294,10 +294,14 @@
+ ///////////////////////////////////////////////////////////////////////////////////////////////////
+ - (void)showBars:(BOOL)show animated:(BOOL)animated {
+ #if __IPHONE_3_2 && __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+-  [[UIApplication sharedApplication] setStatusBarHidden:!show withAnimation:animated];
+-#else
+-  [[UIApplication sharedApplication] setStatusBarHidden:!show animated:animated];
++  if (TTOSVersion() >= 3.2) {
++    [[UIApplication sharedApplication] setStatusBarHidden:!show withAnimation:animated];
++  }
++  else
+ #endif
++  {
++    [[UIApplication sharedApplication] setStatusBarHidden:!show animated:animated];
++  }
+ 
+   if (animated) {
+     [UIView beginAnimations:nil context:NULL];
+Index: src/Three20UICommon/Sources/TTBaseViewController.m
+===================================================================
+--- src/Three20UICommon/Sources/TTBaseViewController.m	(revision 1193)
++++ src/Three20UICommon/Sources/TTBaseViewController.m	(working copy)
+@@ -91,28 +91,34 @@
+ 
+ ///////////////////////////////////////////////////////////////////////////////////////////////////
+ - (void)resizeForKeyboard:(NSNotification*)notification appearing:(BOOL)appearing {
++  CGRect keyboardBounds = CGRectZero;
++  BOOL animated = NO;
+ #if __IPHONE_3_2 && __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+-  CGRect keyboardStart;
+-  [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] getValue:&keyboardStart];
++  if (TTOSVersion() >= 3.2) { 
++    CGRect keyboardStart;
++    [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] getValue:&keyboardStart];
+ 
+-  CGRect keyboardEnd;
+-  [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] getValue:&keyboardEnd];
++    CGRect keyboardEnd;
++    [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] getValue:&keyboardEnd];
+ 
+-  CGRect keyboardBounds = CGRectMake(0, 0, keyboardEnd.size.width, keyboardEnd.size.height);
++    keyboardBounds = CGRectMake(0, 0, keyboardEnd.size.width, keyboardEnd.size.height);
+ 
+-  BOOL animated = keyboardStart.origin.y != keyboardEnd.origin.y;
+-#else
+-  CGRect keyboardBounds;
+-  [[notification.userInfo objectForKey:UIKeyboardBoundsUserInfoKey] getValue:&keyboardBounds];
++    animated = keyboardStart.origin.y != keyboardEnd.origin.y;
++  } 
++  else
++#endif
++  {
++    [[notification.userInfo objectForKey:UIKeyboardBoundsUserInfoKey] getValue:&keyboardBounds];
+ 
+-  CGPoint keyboardStart;
+-  [[notification.userInfo objectForKey:UIKeyboardCenterBeginUserInfoKey] getValue:&keyboardStart];
++    CGPoint keyboardStart;
++    [[notification.userInfo objectForKey:UIKeyboardCenterBeginUserInfoKey] getValue:&keyboardStart];
+ 
+-  CGPoint keyboardEnd;
+-  [[notification.userInfo objectForKey:UIKeyboardCenterEndUserInfoKey] getValue:&keyboardEnd];
++    CGPoint keyboardEnd;
++    [[notification.userInfo objectForKey:UIKeyboardCenterEndUserInfoKey] getValue:&keyboardEnd];
+ 
+-  BOOL animated = keyboardStart.y != keyboardEnd.y;
+-#endif
++    animated = keyboardStart.y != keyboardEnd.y;
++  }
++
+   if (animated) {
+     [UIView beginAnimations:nil context:nil];
+     [UIView setAnimationDuration:TT_TRANSITION_DURATION];
+@@ -287,15 +293,19 @@
+ 
+ ///////////////////////////////////////////////////////////////////////////////////////////////////
+ - (void)keyboardDidShow:(NSNotification*)notification {
++  CGRect keyboardBounds;
+ #if __IPHONE_3_2 && __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+-  CGRect frameStart;
+-  [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] getValue:&frameStart];
++  if (TTOSVersion() >= 3.2) {
++    CGRect frameStart;
++    [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] getValue:&frameStart];
+ 
+-  CGRect keyboardBounds = CGRectMake(0, 0, frameStart.size.width, frameStart.size.height);
+-#else
+-  CGRect keyboardBounds;
+-  [[notification.userInfo objectForKey:UIKeyboardBoundsUserInfoKey] getValue:&keyboardBounds];
++    keyboardBounds = CGRectMake(0, 0, frameStart.size.width, frameStart.size.height);
++  } 
++  else
+ #endif
++  {
++    [[notification.userInfo objectForKey:UIKeyboardBoundsUserInfoKey] getValue:&keyboardBounds];
++  }
+ 
+   [self keyboardDidAppear:YES withBounds:keyboardBounds];
+ }
+@@ -311,15 +321,19 @@
+ 
+ ///////////////////////////////////////////////////////////////////////////////////////////////////
+ - (void)keyboardWillHide:(NSNotification*)notification {
++  CGRect keyboardBounds;
+ #if __IPHONE_3_2 && __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+-  CGRect frameEnd;
+-  [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] getValue:&frameEnd];
++  if (TTOSVersion() >= 3.2) {
++    CGRect frameEnd;
++    [[notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] getValue:&frameEnd];
+ 
+-  CGRect keyboardBounds = CGRectMake(0, 0, frameEnd.size.width, frameEnd.size.height);
+-#else
+-  CGRect keyboardBounds;
+-  [[notification.userInfo objectForKey:UIKeyboardBoundsUserInfoKey] getValue:&keyboardBounds];
++    keyboardBounds = CGRectMake(0, 0, frameEnd.size.width, frameEnd.size.height);
++  } 
++  else
+ #endif
++  {
++    [[notification.userInfo objectForKey:UIKeyboardBoundsUserInfoKey] getValue:&keyboardBounds];
++  }
+ 
+   [self keyboardWillDisappear:YES withBounds:keyboardBounds];
+ }
+Index: src/Three20UI/Sources/UIViewAdditions.m
+===================================================================
+--- src/Three20UI/Sources/UIViewAdditions.m	(revision 1193)
++++ src/Three20UI/Sources/UIViewAdditions.m	(working copy)
+@@ -453,27 +453,31 @@
+ - (NSDictionary *)userInfoForKeyboardNotification {
+ 	CGRect screenFrame = TTScreenBounds();
+ #if __IPHONE_3_2 && __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+-	CGSize keyboardSize = CGSizeMake(screenFrame.size.width, self.height);
+-	CGRect frameBegin = CGRectMake(0, screenFrame.size.height + floor(self.height/2), keyboardSize.width, keyboardSize.height);
+-	CGRect frameEnd = CGRectMake(0, screenFrame.size.height - floor(self.height/2), keyboardSize.width, keyboardSize.height);
++  if (TTOSVersion() >= 3.2) {
++    CGSize keyboardSize = CGSizeMake(screenFrame.size.width, self.height);
++    CGRect frameBegin = CGRectMake(0, screenFrame.size.height + floor(self.height/2), keyboardSize.width, keyboardSize.height);
++    CGRect frameEnd = CGRectMake(0, screenFrame.size.height - floor(self.height/2), keyboardSize.width, keyboardSize.height);
+ 
+-	return [NSDictionary dictionaryWithObjectsAndKeys:
+-          [NSValue valueWithCGRect:frameBegin], UIKeyboardFrameBeginUserInfoKey,
+-          [NSValue valueWithCGRect:frameEnd], UIKeyboardFrameEndUserInfoKey,
+-          nil];
+-#else
+-  CGRect bounds = CGRectMake(0, 0, screenFrame.size.width, self.height);
+-  CGPoint centerBegin = CGPointMake(floor(screenFrame.size.width/2 - self.width/2),
+-                                    screenFrame.size.height + floor(self.height/2));
+-  CGPoint centerEnd = CGPointMake(floor(screenFrame.size.width/2 - self.width/2),
+-                                  screenFrame.size.height - floor(self.height/2));
++    return [NSDictionary dictionaryWithObjectsAndKeys:
++            [NSValue valueWithCGRect:frameBegin], UIKeyboardFrameBeginUserInfoKey,
++            [NSValue valueWithCGRect:frameEnd], UIKeyboardFrameEndUserInfoKey,
++            nil];
++  }
++  else
++#endif
++  {
++    CGRect bounds = CGRectMake(0, 0, screenFrame.size.width, self.height);
++    CGPoint centerBegin = CGPointMake(floor(screenFrame.size.width/2 - self.width/2),
++                                      screenFrame.size.height + floor(self.height/2));
++    CGPoint centerEnd = CGPointMake(floor(screenFrame.size.width/2 - self.width/2),
++                                    screenFrame.size.height - floor(self.height/2));
+ 
+-  return [NSDictionary dictionaryWithObjectsAndKeys:
+-          [NSValue valueWithCGRect:bounds], UIKeyboardBoundsUserInfoKey,
+-          [NSValue valueWithCGPoint:centerBegin], UIKeyboardCenterBeginUserInfoKey,
+-          [NSValue valueWithCGPoint:centerEnd], UIKeyboardCenterEndUserInfoKey,
+-          nil];
+-#endif
++    return [NSDictionary dictionaryWithObjectsAndKeys:
++            [NSValue valueWithCGRect:bounds], UIKeyboardBoundsUserInfoKey,
++            [NSValue valueWithCGPoint:centerBegin], UIKeyboardCenterBeginUserInfoKey,
++            [NSValue valueWithCGPoint:centerEnd], UIKeyboardCenterEndUserInfoKey,
++            nil];
++  }
+ }
+ 
+ 
+Index: src/Three20UI/Sources/TTPostController.m
+===================================================================
+--- src/Three20UI/Sources/TTPostController.m	(revision 1193)
++++ src/Three20UI/Sources/TTPostController.m	(working copy)
+@@ -142,10 +142,14 @@
+   _originalStatusBarHidden = app.statusBarHidden;
+   if (!_originalStatusBarHidden) {
+ #if __IPHONE_3_2 && __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+-    [app setStatusBarHidden:NO withAnimation:YES];
+-#else
+-		[app setStatusBarHidden:NO animated:YES];
++    if (TTOSVersion() >= 3.2) {
++      [app setStatusBarHidden:NO withAnimation:YES];
++    }
++    else
+ #endif
++    {
++      [app setStatusBarHidden:NO animated:YES];
++    }
+     [app setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:YES];
+   }
+   [_textView becomeFirstResponder];
+@@ -156,10 +160,14 @@
+ - (void)hideKeyboard {
+   UIApplication* app = [UIApplication sharedApplication];
+ #if __IPHONE_3_2 && __IPHONE_3_2 <= __IPHONE_OS_VERSION_MAX_ALLOWED
+-	[app setStatusBarHidden:_originalStatusBarHidden withAnimation:YES];
+-#else
+-  [app setStatusBarHidden:_originalStatusBarHidden animated:YES];
++  if (TTOSVersion() >= 3.2) {
++    [app setStatusBarHidden:_originalStatusBarHidden withAnimation:YES];
++  }
++  else
+ #endif
++  {
++    [app setStatusBarHidden:_originalStatusBarHidden animated:YES];
++  }
+   [app setStatusBarStyle:_originalStatusBarStyle animated:NO];
+   [_textView resignFirstResponder];
+ }
