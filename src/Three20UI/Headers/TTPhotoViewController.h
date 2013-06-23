@@ -114,4 +114,8 @@
  */
 - (void)showActivity:(NSString*)title;
 
+- (void)updateToolbarWithOrientation:(UIInterfaceOrientation)interfaceOrientation;
+
+- (void)showBars:(BOOL)show animated:(BOOL)animated;
+
 @end

@@ -181,10 +181,30 @@ static CGFloat kThumbnailRowHeight = 79;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-  return TTIsSupportedOrientation(interfaceOrientation);
+//- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+//  return TTIsSupportedOrientation(interfaceOrientation);
+//}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+-(NSUInteger)supportedInterfaceOrientations {
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+		return UIInterfaceOrientationMaskAll;
+
+	} else {
+		return UIInterfaceOrientationMaskAllButUpsideDown;
+	}
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+-(BOOL) shouldAutorotate {
+    return YES;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
+{
+    return UIInterfaceOrientationPortrait;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {

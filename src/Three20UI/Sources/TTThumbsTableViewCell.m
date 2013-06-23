@@ -81,10 +81,24 @@ static const CGFloat kDefaultThumbSize = 75;
     thumbView.selectionView.hidden = ![photo isSelected];
     thumbView.checkmarkImageView.hidden = ![photo isSelected];
 
+      // mark GIFs
+      NSString *url = [photo URLForVersion:TTPhotoVersionLarge];
+      NSLog(@"assign photo: url = %@",url);
+      if ( [url hasSuffix:@"%2E%67%69%66"] || [url hasSuffix:@".gif"] ||
+           [url rangeOfString:@"%2E%67%69%66&"].length > 0 ||
+           [url rangeOfString:@".gif&"].length > 0
+          ) {
+          thumbView.gifLabel.hidden = NO;
+
+      } else {
+          thumbView.gifLabel.hidden = YES;
+      }
+
   } else {
 
     thumbView.thumbURL = nil;
     thumbView.hidden = YES;
+    thumbView.gifLabel.hidden = YES;
   }
 }
 
@@ -123,7 +137,6 @@ static const CGFloat kDefaultThumbSize = 75;
                                                       checkmarkRect.size.width, 
                                                       checkmarkRect.size.height
                                                       );
-
     thumbFrame.origin.x += kSpacing + self.thumbSize;
   }
 }

@@ -26,8 +26,10 @@
  */
 @interface TTURLImageResponse : NSObject <TTURLResponse> {
   UIImage* _image;
+    NSData *_rawData;
 }
 
 @property (nonatomic, readonly) UIImage* image;
+@property (nonatomic, readonly) NSData *rawData;
 
 @end

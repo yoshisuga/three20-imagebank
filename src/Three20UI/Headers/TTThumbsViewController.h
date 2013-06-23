@@ -36,5 +36,6 @@
 
 - (TTPhotoViewController*)createPhotoViewController;
 - (id<TTTableViewDataSource>)createDataSource;
+- (NSString*)URLForPhoto:(id<TTPhoto>)photo;
 
 @end

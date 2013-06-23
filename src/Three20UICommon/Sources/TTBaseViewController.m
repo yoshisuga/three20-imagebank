@@ -193,21 +193,41 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-  if (TTIsPad()) {
-    return YES;
+//- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+//  if (TTIsPad()) {
+//    return YES;
+//
+//  } else {
+//    UIViewController* popup = [self popupViewController];
+//    if (popup) {
+//      return [popup shouldAutorotateToInterfaceOrientation:interfaceOrientation];
+//
+//    } else {
+//      return [super shouldAutorotateToInterfaceOrientation:interfaceOrientation];
+//    }
+//  }
+//}
 
-  } else {
-    UIViewController* popup = [self popupViewController];
-    if (popup) {
-      return [popup shouldAutorotateToInterfaceOrientation:interfaceOrientation];
-
-    } else {
-      return [super shouldAutorotateToInterfaceOrientation:interfaceOrientation];
-    }
-  }
+///////////////////////////////////////////////////////////////////////////////////////////////////
+-(NSUInteger)supportedInterfaceOrientations {
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+		return UIInterfaceOrientationMaskAll;
+        
+	} else {
+		return UIInterfaceOrientationMaskAllButUpsideDown;
+	}
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+-(BOOL) shouldAutorotate {
+    return YES;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
+{
+    return UIInterfaceOrientationPortrait;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation

@@ -31,7 +31,31 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)display {
   if (nil != _override) {
-    self.contents = (id)_override.image.CGImage;
+      UIImage *image = _override.image;
+      if ( [[image images] count] > 1) {
+          // its an animated image, lets animate the layer!
+          NSTimeInterval duration = [image duration];
+          NSLog(@"its an animated image! duration: %f",duration);
+          [CATransaction flush];
+          [CATransaction begin];
+          CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"contents"];
+          NSMutableArray *frames = [[[NSMutableArray alloc] init] autorelease];
+          for (UIImage *frame in [image images]) {
+              [frames addObject:(id)frame.CGImage];
+          }
+          animation.values = frames;
+          animation.repeatCount = HUGE_VALF;
+          animation.autoreverses = NO;
+          animation.calculationMode = kCAAnimationDiscrete;
+          animation.duration = duration;
+          [animation setRemovedOnCompletion:NO];
+          [self addAnimation:animation forKey:@"contents"];
+          [CATransaction commit];
+      } else {
+          [self removeAllAnimations];
+          self.contents = (id)_override.image.CGImage;
+      }
+    
 
   } else {
     return [super display];

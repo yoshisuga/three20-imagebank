@@ -26,7 +26,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 @implementation TTThumbView
 
-@synthesize selectionView,checkmarkImageView;
+@synthesize selectionView,checkmarkImageView, gifLabel;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (id)initWithFrame:(CGRect)frame {
@@ -45,6 +45,21 @@
       self.checkmarkImageView.userInteractionEnabled = NO;
     self.checkmarkImageView.hidden = YES;
     [self addSubview:self.checkmarkImageView];
+      UIFont *font = [UIFont boldSystemFontOfSize:9.0f];
+      self.gifLabel = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
+      self.gifLabel.opaque = NO;
+      self.gifLabel.font = font;
+      self.gifLabel.numberOfLines = 1;
+      self.gifLabel.textAlignment = NSTextAlignmentLeft;
+      self.gifLabel.textColor = [UIColor whiteColor];
+      self.gifLabel.backgroundColor = [UIColor clearColor];
+      self.gifLabel.alpha = 0.7f;
+      self.gifLabel.text = @"GIF";
+      self.gifLabel.hidden = YES;
+      CGSize textSize = [self.gifLabel.text sizeWithFont:font];
+      CGRect textFrame = CGRectMake(5.0f, 5.0f, textSize.width, textSize.height);
+      self.gifLabel.frame = textFrame;
+      [self addSubview:self.gifLabel];
   }
 
   return self;

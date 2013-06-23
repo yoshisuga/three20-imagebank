@@ -20,11 +20,13 @@
 @interface TTThumbView : TTButton {
     UIView *selectionView;
     UIImageView *checkmarkImageView;
+    UILabel *gifLabel;
 }
 
 @property (nonatomic, copy) NSString* thumbURL;
 
 @property (nonatomic, retain) UIView *selectionView;
 @property (nonatomic, retain) UIImageView *checkmarkImageView;
+@property (nonatomic, retain) UILabel *gifLabel;
 
 @end

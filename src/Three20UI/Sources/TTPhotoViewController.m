@@ -219,11 +219,11 @@ static const NSInteger kActivityLabelTag          = 96;
        autorelease];
 
     } else {
-      self.navigationItem.rightBarButtonItem = nil;
+//      self.navigationItem.rightBarButtonItem = nil;
     }
 
   } else {
-    self.navigationItem.rightBarButtonItem = nil;
+//    self.navigationItem.rightBarButtonItem = nil;
   }
 
   UIBarButtonItem* playButton = [_toolbar itemWithTag:1];
@@ -560,7 +560,6 @@ static const NSInteger kActivityLabelTag          = 96;
   TT_RELEASE_SAFELY(_toolbar);
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
@@ -609,7 +608,6 @@ static const NSInteger kActivityLabelTag          = 96;
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)showBars:(BOOL)show animated:(BOOL)animated {
   [super showBars:show animated:animated];
-
   CGFloat alpha = show ? 1 : 0;
   if (alpha == _toolbar.alpha)
     return;
