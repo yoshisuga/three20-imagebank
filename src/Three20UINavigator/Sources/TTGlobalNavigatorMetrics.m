@@ -41,7 +41,7 @@ UIInterfaceOrientation TTInterfaceOrientation() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 CGRect TTScreenBounds() {
   CGRect bounds = [UIScreen mainScreen].bounds;
-  if (UIInterfaceOrientationIsLandscape(TTInterfaceOrientation())) {
+  if ((NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_7_1) && UIInterfaceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation)) {
     CGFloat width = bounds.size.width;
     bounds.size.width = bounds.size.height;
     bounds.size.height = width;

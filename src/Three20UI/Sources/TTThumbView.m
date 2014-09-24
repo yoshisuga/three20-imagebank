@@ -36,12 +36,13 @@
     [self setStylesWithSelector:@"thumbView:"];
     self.selectionView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
     self.selectionView.backgroundColor = [UIColor whiteColor];
-    self.selectionView.alpha = .5f;
+    self.selectionView.alpha = .3f;
       self.selectionView.userInteractionEnabled = NO;
     self.selectionView.hidden = YES;
     [self addSubview:selectionView];
     self.checkmarkImageView = [[[UIImageView alloc] initWithFrame:CGRectZero] autorelease];
-    self.checkmarkImageView.image = [UIImage imageNamed:@"checkmark.png"];
+    self.checkmarkImageView.image = [[UIImage imageNamed:@"checkmark.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+      self.checkmarkImageView.tintColor = [UIColor redColor];
       self.checkmarkImageView.userInteractionEnabled = NO;
     self.checkmarkImageView.hidden = YES;
     [self addSubview:self.checkmarkImageView];

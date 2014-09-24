@@ -166,6 +166,7 @@ static CGFloat kThumbSpacing = 4;
     thumbsCell.delegate = _delegate;
     thumbsCell.columnCount = [self columnCountForView:tableView];
   }
+  cell.backgroundColor = [UIColor clearColor];
 }
 
 
